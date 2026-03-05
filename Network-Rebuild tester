@@ -9,3 +9,5 @@ cd /home/centegix/gateway || {
     echo "ERROR: Could not change directory to /home/centegix/gateway"
     exit 1
 }
+
+echo "Successfully changed directory to $(pwd)"
