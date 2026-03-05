@@ -9,10 +9,8 @@ echo "===== Centegix Network Rebuild ====="
 
 echo "Changing directory to $GATEWAY_DIR"
 
-cd "$GATEWAY_DIR" || {
-    echo "ERROR: Cannot change to $GATEWAY_DIR"
-    exit 1
-}
+cd "$GATEWAY_DIR" || exit 1
+
 
 sleep 3
 
