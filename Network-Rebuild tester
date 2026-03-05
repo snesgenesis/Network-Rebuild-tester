@@ -2,54 +2,52 @@
 
 set -e
 
-GATEWAY_DIR="/home/centegix/gateway"
-
-REBUILD_SCRIPT="scripts/rebuild_network.js"
-
 echo "===== Centegix Network Rebuild ====="
 
-cd "/home/centegix/gateway" || exit 1
+# Go to gateway directory
+cd /home/centegix/gateway || exit 1
 
-sleep 7
-
-echo "Stopping forever processes..."
-forever stopall || true
-
-sleep 3
+echo "Stopping all forever processes..."
+forever stopall
 
 run_rebuild() {
 
-  WAIT="$1"
+    echo "Starting rebuild cycle 1"
+    node scripts/rebuild_network.js &
+    PID=$!
+    sleep 12
+    kill -SIGINT $PID
+    wait $PID 2>/dev/null || true
 
-  echo ""
-  echo "Running rebuild_network.js for ${WAIT}s..."
+    echo "Starting rebuild cycle 2"
+    node scripts/rebuild_network.js &
+    PID=$!
+    sleep 12
+    kill -SIGINT $PID
+    wait $PID 2>/dev/null || true
 
-  node "$REBUILD_SCRIPT" &
-  PID=$!
+    echo "Starting rebuild cycle 3"
+    node scripts/rebuild_network.js &
+    PID=$!
+    sleep 12
+    kill -SIGINT $PID
+    wait $PID 2>/dev/null || true
 
-  sleep "$WAIT"
-
-  echo "Sending Ctrl+C to PID $PID"
-  kill -SIGINT "$PID" 2>/dev/null || true
-  wait "$PID" 2>/dev/null || true
+echo "Starting rebuild cycle 3"
+    node scripts/rebuild_network.js &
+    PID=$!
+    sleep 45
+    kill -SIGINT $PID
+    wait $PID 2>/dev/null || true
 }
 
-# Rebuild cycles
-run_rebuild 12
-run_rebuild 12
-run_rebuild 12
-run_rebuild 45
+# Run rebuild procedure
+run_rebuild
 
-echo ""
-echo "Restarting gateway..."
+echo "Restarting gateway service..."
 
 sudo -u centegix FOREVER_ROOT=/tmp/forever \
-forever --minUptime 1 start "$GATEWAY_DIR/index.js"
+forever --minUptime 1 start /home/centegix/gateway/index.js
 
-sleep 3
-
-echo ""
 echo "Following logs..."
-
-sudo -u centegix FOREVER_ROOT=/tmp/forever \
 forever logs 0 -f
