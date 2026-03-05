@@ -1,11 +1,42 @@
 #!/usr/bin/env bash
 
-set -e
+echo "===== Centegix Network Rebuild ====="
 
-echo "===== Centegix Zigbee Network Rebuild ====="
-
-echo "Go to gateway directory"
-cd /home/centegix/gateway || {exit 1
+# Go to gateway directory
+cd /home/centegix/gateway || {
+  echo "Failed to change directory"
+  exit 1
 }
 
-echo "Successfully changed directory to $(pwd)"
+sleep 3
+
+# Stop forever processes
+forever stopall || true
+
+sleep 3
+
+# Function to run rebuild and stop with Ctrl+C equivalent
+run_rebuild () {
+  WAIT=$1
+
+  node scripts/rebuild_network.js &
+  PID=$!
+
+  sleep "$WAIT"
+
+  # Simulate Ctrl+C
+  kill -SIGINT "$PID" 2>/dev/null
+  wait "$PID" 2>/dev/null
+}
+
+# Rebuild cycles
+run_rebuild 12
+run_rebuild 12
+run_rebuild 12
+run_rebuild 45
+
+# Restart gateway and follow logs
+sudo -u centegix FOREVER_ROOT=/tmp/forever \
+forever --minUptime 1 start /home/centegix/gateway/index.js && forever logs 0 -f
+
+sleep 3
