@@ -7,8 +7,6 @@ REBUILD_SCRIPT="scripts/rebuild_network.js"
 
 echo "===== Centegix Network Rebuild ====="
 
-echo "Changing directory to $GATEWAY_DIR"
-
 cd "/home/centegix/gateway" || exit 1
 
 sleep 3
