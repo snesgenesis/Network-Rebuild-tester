@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -e
+
+GATEWAY_DIR="/home/centegix/gateway"
+REBUILD_SCRIPT="scripts/rebuild_network.js"
+FOREVER_ROOT="/tmp/forever"
+
+echo "================================="
+echo " Centegix Zigbee Network Rebuild "
+echo "================================="
+
+echo ""
+echo "Changing to gateway directory..."
+
+cd "$GATEWAY_DIR" || {
+    echo "ERROR: Could not change to $GATEWAY_DIR"
+    exit 1
+}
+
+echo ""
+echo "Stopping all forever processes..."
+forever stopall || true
+
+echo ""
+echo "Running Zigbee network rebuild..."
+
+node "$REBUILD_SCRIPT"
+
+echo ""
+echo "Restarting gateway service..."
+
+sudo -u centegix FOREVER_ROOT=$FOREVER_ROOT \
+forever --minUptime 1 start "$GATEWAY_DIR/index.js"
+
+echo ""
+echo "Gateway restarted."
+
+echo ""
+echo "Following logs (press CTRL+C to exit)..."
+
+forever logs 0 -f
