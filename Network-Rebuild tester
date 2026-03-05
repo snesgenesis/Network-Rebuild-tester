@@ -10,7 +10,7 @@ echo "===== Centegix Network Rebuild ====="
 
 cd "/home/centegix/gateway" || exit 1
 
-sleep 3
+sleep 7
 
 echo "Stopping forever processes..."
 forever stopall || true
