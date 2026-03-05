@@ -3,6 +3,7 @@
 set -e
 
 GATEWAY_DIR="/home/centegix/gateway"
+
 REBUILD_SCRIPT="scripts/rebuild_network.js"
 
 echo "===== Centegix Network Rebuild ====="
