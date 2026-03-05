@@ -11,7 +11,6 @@ echo "Changing directory to $GATEWAY_DIR"
 
 cd "/home/centegix/gateway" || exit 1
 
-
 sleep 3
 
 echo "Stopping forever processes..."
