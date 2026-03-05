@@ -15,7 +15,7 @@ run_rebuild() {
     echo "Starting rebuild cycle 1"
     node scripts/rebuild_network.js &
     PID=$!
-    sleep 12
+    sleep 11
     kill -SIGINT $PID
     wait $PID 2>/dev/null || true
 
