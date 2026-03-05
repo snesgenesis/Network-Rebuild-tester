@@ -3,9 +3,7 @@
 echo "===== Centegix Network Rebuild ====="
 
 # Go to gateway directory
-cd /home/centegix/gateway || {
-  exit 1
-}
+cd /home/centegix/gateway || exit 1
 
 sleep 3
 
